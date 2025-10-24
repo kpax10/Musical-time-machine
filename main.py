@@ -12,10 +12,6 @@ header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:139.0) Gecko/2010010
 response = requests.get(url=f'{BASE_URL}{get_date}', headers=header)
 
 soup = BeautifulSoup(response.text, 'html.parser')
-# with open('songs.html', 'w', encoding='utf-8') as f:
-#     f.write(soup.prettify())
 songs_h3 = soup.select('li ul li h3')
-# for song in songs_h3:
-#     print(song.get_text().strip())
 song_names = [song.get_text().strip() for song in songs_h3]
 print(song_names)
