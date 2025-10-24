@@ -1,9 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 BASE_URL = 'https://www.billboard.com/charts/hot-100/'
-CLIENT_ID = '64822ce98bbc45c9a1ada1c233647d24'
-CLIENT_SECRET = '0621f3d75e83426db01f596ef7f13449'
+SPOTIFY_CLIENT_ID = '64822ce98bbc45c9a1ada1c233647d24'
+SPOTIFY_CLIENT_SECRET = '0621f3d75e83426db01f596ef7f13449'
+SPOTIFY_REDIRECT_URI = 'https://example.com'
 
 # get_date = input('Which date do you want to travel to?  Type the date in this format YYYY-MM-DD: ')
 get_date = '2010-02-02'
