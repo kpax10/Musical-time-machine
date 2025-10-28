@@ -38,6 +38,7 @@ sp = spotipy.Spotify(
   )
 )
 print("Auth OK. User:", sp.current_user()["display_name"])
+user_id = sp.current_user()["id"]
 
 # def simplify_artist(name):
 #     return re.split(r'\b(?:feat\.?|featuring|ft\.?)\b', name, flags=re.I)[0].strip()
@@ -62,4 +63,14 @@ for song in songs:
     except IndexError:
         print(f"{song} doesn't exist in Spotify. Skipped.")
 
-print(f"Total songs found: {len(song_uris)}")
+playlist = sp.user_playlist_create(
+    user=user_id,
+    name=f"{date} Billboard 100",
+    public=False,
+    description="Top 100 songs from Billboard on " + date
+)
+print(f"✅ Created playlist: {playlist['name']}")
+
+sp.playlist_add_items(playlist_id=playlist['id'], items=song_uris)
+print("✅ Added tracks successfully!")
+print("Open in Spotify:", playlist['external_urls']['spotify'])
