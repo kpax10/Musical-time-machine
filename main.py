@@ -3,6 +3,8 @@ import re
 from bs4 import BeautifulSoup
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from datetime import datetime, date as date_cls
+
 
 BASE_URL = 'https://www.billboard.com/charts/hot-100/'
 SPOTIFY_CLIENT_ID = '64822ce98bbc45c9a1ada1c233647d24'
@@ -11,7 +13,24 @@ SPOTIFY_REDIRECT_URI = 'https://example.com/'
 YOUR_SPOTIFY_DISPLAY_NAME = 'notxap55'
 
 # get_date = input('Which date do you want to travel to?  Type the date in this format YYYY-MM-DD: ')
-date = '2010-02-02'
+# date = '2010-02-02'
+
+def get_valid_date_str():
+    min_date = date_cls(1958, 8, 4)
+    max_date = date_cls.today()
+    while True:
+        user_input = input('Which date do you want to travel to?  Type the date in this format YYYY-MM-DD: ')
+        try:
+            d = datetime.strptime(user_input, '%Y-%m-%d').date()
+        except ValueError:
+            print("❌ Invalid format. Please use YYYY-MM-DD (e.g., 1991-07-20).")
+            continue
+        if not (min_date <= d <= max_date):
+            print(f"❌ Date must be between {min_date} and {max_date}.")
+            continue
+        return d.isoformat()
+    
+date = get_valid_date_str()  # <-- only change: validated date string
 
 header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:139.0) Gecko/20100101 Firefox/139.0"}
 response = requests.get(url=f'{BASE_URL}{date}', headers=header)
@@ -38,23 +57,12 @@ sp = spotipy.Spotify(
   )
 )
 print("Auth OK. User:", sp.current_user()["display_name"])
+print("Getting your selection.  This may take a minute...")
 user_id = sp.current_user()["id"]
-
-# def simplify_artist(name):
-#     return re.split(r'\b(?:feat\.?|featuring|ft\.?)\b', name, flags=re.I)[0].strip()
 
 song_uris = []
 year = date.split('-')[0]
-# for song in songs:
-#   artist = simplify_artist(song['artist'])
-#   query = f"track:{song['title']} artist:{song['artist']}"
-#   result = sp.search(q=query, type='track', limit=1)
-#   if result['tracks']['items']:
-#     uri = result['tracks']['items'][0]['uri']
-#     song_uris.append(uri)
-#     print(f"✅ Found: {song['title']} — {song['artist']}")
-#   else:
-#     print(f"❌ Not Found: {song['title']} — {song['artist']}")
+
 for song in songs:
     result = sp.search(q=f'track: {song} year: {year}', type='track')
     try:
